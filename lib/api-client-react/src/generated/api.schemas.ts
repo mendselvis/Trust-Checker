@@ -8,3 +8,58 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface AnalyseRequest {
+  /** The raw chat conversation text to analyse */
+  conversation: string;
+}
+
+export type RedFlagSeverity =
+  (typeof RedFlagSeverity)[keyof typeof RedFlagSeverity];
+
+export const RedFlagSeverity = {
+  low: "low",
+  medium: "medium",
+  high: "high",
+} as const;
+
+export interface RedFlag {
+  id: string;
+  /** Short label for this red flag */
+  label: string;
+  /** Plain English explanation of what was detected */
+  description: string;
+  severity: RedFlagSeverity;
+  /** Approximate position in the conversation as a fraction 0-1 */
+  position: number;
+}
+
+/**
+ * Colour-coded overall verdict
+ */
+export type AnalyseResultVerdict =
+  (typeof AnalyseResultVerdict)[keyof typeof AnalyseResultVerdict];
+
+export const AnalyseResultVerdict = {
+  safe: "safe",
+  caution: "caution",
+  danger: "danger",
+} as const;
+
+export interface AnalyseResult {
+  /**
+   * Trust score (100 = fully trustworthy, 0 = definite scam)
+   * @minimum 0
+   * @maximum 100
+   */
+  trustScore: number;
+  /** Colour-coded overall verdict */
+  verdict: AnalyseResultVerdict;
+  /** A plain English overall summary paragraph */
+  summary: string;
+  redFlags: RedFlag[];
+}
+
+export interface ApiError {
+  error: string;
+}

@@ -14,3 +14,40 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * @summary Analyse a conversation for romance scam patterns
+ */
+export const AnalyseConversationBody = zod.object({
+  conversation: zod
+    .string()
+    .describe("The raw chat conversation text to analyse"),
+});
+
+export const analyseConversationResponseTrustScoreMin = 0;
+export const analyseConversationResponseTrustScoreMax = 100;
+
+export const AnalyseConversationResponse = zod.object({
+  trustScore: zod
+    .number()
+    .min(analyseConversationResponseTrustScoreMin)
+    .max(analyseConversationResponseTrustScoreMax)
+    .describe("Trust score (100 = fully trustworthy, 0 = definite scam)"),
+  verdict: zod
+    .enum(["safe", "caution", "danger"])
+    .describe("Colour-coded overall verdict"),
+  summary: zod.string().describe("A plain English overall summary paragraph"),
+  redFlags: zod.array(
+    zod.object({
+      id: zod.string(),
+      label: zod.string().describe("Short label for this red flag"),
+      description: zod
+        .string()
+        .describe("Plain English explanation of what was detected"),
+      severity: zod.enum(["low", "medium", "high"]),
+      position: zod
+        .number()
+        .describe("Approximate position in the conversation as a fraction 0-1"),
+    }),
+  ),
+});

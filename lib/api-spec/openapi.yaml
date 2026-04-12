@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: analyse
+    description: Romance scam analysis operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /analyse:
+    post:
+      operationId: analyseConversation
+      tags: [analyse]
+      summary: Analyse a conversation for romance scam patterns
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyseRequest"
+      responses:
+        "200":
+          description: Analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyseResult"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +65,65 @@ components:
           type: string
       required:
         - status
-
+    AnalyseRequest:
+      type: object
+      properties:
+        conversation:
+          type: string
+          description: The raw chat conversation text to analyse
+      required:
+        - conversation
+    RedFlag:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+          description: Short label for this red flag
+        description:
+          type: string
+          description: Plain English explanation of what was detected
+        severity:
+          type: string
+          enum: [low, medium, high]
+        position:
+          type: number
+          description: Approximate position in the conversation as a fraction 0-1
+      required:
+        - id
+        - label
+        - description
+        - severity
+        - position
+    AnalyseResult:
+      type: object
+      properties:
+        trustScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Trust score (100 = fully trustworthy, 0 = definite scam)
+        verdict:
+          type: string
+          enum: [safe, caution, danger]
+          description: Colour-coded overall verdict
+        summary:
+          type: string
+          description: A plain English overall summary paragraph
+        redFlags:
+          type: array
+          items:
+            $ref: "#/components/schemas/RedFlag"
+      required:
+        - trustScore
+        - verdict
+        - summary
+        - redFlags
+    ApiError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error

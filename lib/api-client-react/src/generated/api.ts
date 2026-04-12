@@ -5,18 +5,26 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
+  MutationFunction,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import type { HealthStatus } from "./api.schemas";
+import type {
+  AnalyseRequest,
+  AnalyseResult,
+  ApiError,
+  HealthStatus,
+} from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
-import type { ErrorType } from "../custom-fetch";
+import type { ErrorType, BodyType } from "../custom-fetch";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -99,3 +107,89 @@ export function useHealthCheck<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary Analyse a conversation for romance scam patterns
+ */
+export const getAnalyseConversationUrl = () => {
+  return `/api/analyse`;
+};
+
+export const analyseConversation = async (
+  analyseRequest: AnalyseRequest,
+  options?: RequestInit,
+): Promise<AnalyseResult> => {
+  return customFetch<AnalyseResult>(getAnalyseConversationUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(analyseRequest),
+  });
+};
+
+export const getAnalyseConversationMutationOptions = <
+  TError = ErrorType<ApiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof analyseConversation>>,
+    TError,
+    { data: BodyType<AnalyseRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof analyseConversation>>,
+  TError,
+  { data: BodyType<AnalyseRequest> },
+  TContext
+> => {
+  const mutationKey = ["analyseConversation"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof analyseConversation>>,
+    { data: BodyType<AnalyseRequest> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return analyseConversation(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AnalyseConversationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof analyseConversation>>
+>;
+export type AnalyseConversationMutationBody = BodyType<AnalyseRequest>;
+export type AnalyseConversationMutationError = ErrorType<ApiError>;
+
+/**
+ * @summary Analyse a conversation for romance scam patterns
+ */
+export const useAnalyseConversation = <
+  TError = ErrorType<ApiError>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof analyseConversation>>,
+    TError,
+    { data: BodyType<AnalyseRequest> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof analyseConversation>>,
+  TError,
+  { data: BodyType<AnalyseRequest> },
+  TContext
+> => {
+  return useMutation(getAnalyseConversationMutationOptions(options));
+};
