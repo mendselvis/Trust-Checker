@@ -1,0 +1,31 @@
+Here's your complete Replit Agent 4 prompt to add both features:
+
+---
+
+> Add two new sections to the TrustCheck website between the hero/scan area and the features cards at the bottom:
+>
+> **Section 1 — "These profiles are not real people"**
+> A grid of 4 face cards using blurred real photos. Use free Unsplash portrait photos and apply CSS `filter: blur(8px) brightness(0.7)` to blur them. Each card has:
+> - A blurred human face image (aspect ratio 0.85, object-fit cover)
+> - A red "FAKE" stamp overlaid on the image
+> - Below the image: a fake name, fake role (e.g. "US Army Colonel, deployed", "Surgeon, Qatar", "Oil rig Engineer, offshore", "Businessman, abroad")
+> - 2 small red flag pills (e.g. "Military", "Overseas")
+> A caption below the grid: "These are the 4 most common romance scam personas. Sound familiar?"
+>
+> **Section 2 — "Seen these messages before?"**
+> Two chat conversation examples styled as WhatsApp-style chat bubbles on a dark card. Each conversation has:
+> - A person name, platform and day (e.g. "Instagram DM — Day 1")
+> - A "X flags detected" badge in red
+> - 3-4 chat bubbles alternating between them (dark blue) and me (dark green)
+> - Key scam phrases highlighted in red with a red underline inside the bubbles — e.g. "I feel like I've known you my whole life", "US Army Colonel stationed in Syria", "Can we move to WhatsApp?", "My camera is broken", "There is an emergency with my funds"
+> - A row of red flag chips at the bottom of each card listing what was detected
+>
+> Conversation 1 (Instagram Day 1): Military scammer — love bombing, overseas claim, platform switch to WhatsApp
+>
+> Conversation 2 (WhatsApp Day 8): Doctor scammer — love bombing, broken camera excuse to avoid video call, emergency money request of $500
+>
+> Design: match the existing dark navy (#0a0f1e) theme. Cards background #111827. Red highlights #e2533a. Fully responsive on mobile.
+
+---
+
+Paste that into Agent 4 and it will add both sections perfectly. Come back and show me the result when it's done! 🚀

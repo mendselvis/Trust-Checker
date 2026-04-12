@@ -14,6 +14,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrustScore } from "@/components/trust-score";
 import { RedFlagTimeline } from "@/components/red-flag-timeline";
+import { ScamPersonas } from "@/components/scam-personas";
+import { ScamConversations } from "@/components/scam-conversations";
 
 const formSchema = z.object({
   conversation: z.string().min(20, "Please paste a slightly longer conversation for an accurate analysis."),
@@ -129,6 +131,9 @@ export default function Home() {
                     </Form>
                   </CardContent>
                 </Card>
+
+                <ScamPersonas />
+                <ScamConversations />
               </motion.div>
             ) : (
               <motion.div
